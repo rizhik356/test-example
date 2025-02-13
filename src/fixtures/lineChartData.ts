@@ -10,8 +10,8 @@ export type NewChartData = {
   uv: number | null
   pv: number | null
   amt: number
-  highPv?: number | null
-  highUv?: number | null
+  zScorePv: number
+  zScoreUv: number
 }
 
 const lineChartData: Array<LineChartData> = [

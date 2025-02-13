@@ -1,7 +1,6 @@
 import lineChartData, { NewChartData } from './fixtures/lineChartData.ts'
 import {
   LineChart as DefaultLineChart,
-  Line,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -13,10 +12,12 @@ import makeStandartDeviation from './helpers/makeStandartDeviation.ts'
 import makeAvg from './helpers/makeAvg.ts'
 import { useEffect, useState } from 'react'
 import makeNewData from './helpers/makeNewData.ts'
+import Stops from './Stops.tsx'
+import lineData from './sources/linaData.ts'
+import makeLines from './Lines.tsx'
 
 const LineChart = () => {
   const [data, setData] = useState<Array<NewChartData>>([])
-  console.log(data)
 
   useEffect(() => {
     const avg = makeAvg(lineChartData)
@@ -27,27 +28,48 @@ const LineChart = () => {
 
   return (
     <ResponsiveContainer className={'chart_container'}>
-      <DefaultLineChart data={lineChartData}>
+      <DefaultLineChart data={data}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="name" />
         <YAxis />
         <Tooltip />
-        <Legend />
+        <Legend
+          payload={[
+            { color: lineData.pv.color, value: lineData.pv.value },
+            { color: lineData.uv.color, value: lineData.uv.value },
+          ]}
+        />
         <defs>
-          <linearGradient id="colorUv" x1="0%" y1="0" x2="100%" y2="0">
-            <stop offset="0%" stopColor="red" />
-            <stop offset="33%" stopColor="red" />
-            <stop offset="33%" stopColor="#8884d8" />
-            <stop offset={`${100}%`} stopColor="#8884d8" />
+          <linearGradient
+            id={lineData.uv.gradientId}
+            x1="0%"
+            y1="0"
+            x2="100%"
+            y2="0"
+          >
+            <Stops
+              key={lineData.uv.dataKey}
+              data={data}
+              lineKey={lineData.uv.dataKey}
+              color={lineData.uv.color}
+            />
+          </linearGradient>
+          <linearGradient
+            id={lineData.pv.gradientId}
+            x1="0%"
+            y1="0"
+            x2="100%"
+            y2="0"
+          >
+            <Stops
+              key={lineData.pv.dataKey}
+              data={data}
+              lineKey={lineData.pv.dataKey}
+              color={lineData.pv.color}
+            />
           </linearGradient>
         </defs>
-        <Line
-          type="monotone"
-          dataKey="pv"
-          stroke="url(#colorUv)"
-          activeDot={{ r: 8 }}
-        />
-        <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+        {makeLines(data)}
       </DefaultLineChart>
     </ResponsiveContainer>
   )

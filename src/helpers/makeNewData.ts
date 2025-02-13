@@ -13,7 +13,7 @@ const makeNewData = ({ data, avg, deviation }: Props) => {
   return data.map(({ uv, pv, ...rest }) => {
     const zScoreUv = makeZScore({ num: uv, avg, deviation, key: 'uv' })
     const zScorePv = makeZScore({ num: pv, avg, deviation, key: 'pv' })
-    return { ...rest, zScorePv, zScoreUv }
+    return { ...rest, uv, pv, zScorePv, zScoreUv }
   })
 }
 
